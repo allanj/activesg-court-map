@@ -42,6 +42,20 @@
     return t.trim();
   }
 
+  function looksLikeVenueName(text) {
+    const lower = text.toLowerCase();
+    return (
+      lower.includes("school hall") ||
+      lower.includes("sport hall") ||
+      lower.includes("sports hall") ||
+      lower.includes("sport centre") ||
+      lower.includes("sports centre") ||
+      lower.includes("community centre") ||
+      lower.includes("clubhouse") ||
+      lower.includes("tampines hub")
+    );
+  }
+
   function scanPageVenues() {
     const found = new Map();
     const els = document.querySelectorAll(
@@ -50,9 +64,20 @@
     for (const el of els) {
       const text = getDirectText(el);
       if (!text || text.length < 5 || text.length > 120) continue;
+
       const venue = findVenue(text);
       if (venue && !found.has(venue.name)) {
         found.set(venue.name, { ...venue, onPage: true });
+      } else if (!venue && looksLikeVenueName(text) && !found.has(text)) {
+        found.set(text, {
+          name: text,
+          lat: null,
+          lng: null,
+          address: "",
+          region: "",
+          onPage: true,
+          unmatched: true,
+        });
       }
     }
     return Array.from(found.values());

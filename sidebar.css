@@ -110,6 +110,22 @@ html, body {
   text-decoration: underline;
 }
 
+.venue-item.unmatched {
+  border-left: 3px solid #f9a825;
+}
+
+.venue-tag-unknown {
+  display: inline-block;
+  font-size: 9px;
+  color: #f57f17;
+  background: #fff8e1;
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-left: 6px;
+  font-weight: 400;
+  vertical-align: middle;
+}
+
 .empty-state {
   padding: 24px 14px;
   text-align: center;

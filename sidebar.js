@@ -48,30 +48,42 @@ document.addEventListener("DOMContentLoaded", () => {
     venueListEl.innerHTML = "";
 
     filtered.forEach((venue) => {
-      const marker = L.marker([venue.lat, venue.lng])
-        .bindPopup(
-          `<strong>${venue.name}</strong><br>` +
-            `<span style="font-size:11px;color:#666">${venue.address}</span><br>` +
-            `<a href="${createGoogleMapsUrl(venue.lat, venue.lng)}" target="_blank" style="font-size:11px">Google Maps &rarr;</a>`
-        )
-        .addTo(map);
+      const hasCoords = venue.lat != null && venue.lng != null;
+      let marker = null;
 
-      markers.push({ marker, venue });
+      if (hasCoords) {
+        marker = L.marker([venue.lat, venue.lng])
+          .bindPopup(
+            `<strong>${venue.name}</strong><br>` +
+              `<span style="font-size:11px;color:#666">${venue.address}</span><br>` +
+              `<a href="${createGoogleMapsUrl(venue.lat, venue.lng)}" target="_blank" style="font-size:11px">Google Maps &rarr;</a>`
+          )
+          .addTo(map);
+        markers.push({ marker, venue });
+      }
+
+      const searchUrl = hasCoords
+        ? createGoogleMapsUrl(venue.lat, venue.lng)
+        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(venue.name + " Singapore")}`;
 
       const item = document.createElement("div");
-      item.className = "venue-item" + (venue.onPage ? " on-page" : "");
+      item.className = "venue-item" + (venue.onPage ? " on-page" : "") + (venue.unmatched ? " unmatched" : "");
       item.innerHTML = `
-        <div class="venue-name">${venue.name}</div>
+        <div class="venue-name">${venue.name}${venue.unmatched ? '<span class="venue-tag-unknown">no coords</span>' : ""}</div>
         <div class="venue-meta">
-          <span class="venue-address">${venue.address}</span>
-          <a href="${createGoogleMapsUrl(venue.lat, venue.lng)}" target="_blank" class="venue-gmaps">Maps</a>
+          <span class="venue-address">${venue.address || "Address not in database"}</span>
+          <a href="${searchUrl}" target="_blank" class="venue-gmaps">Maps</a>
         </div>
       `;
 
       item.addEventListener("click", (e) => {
         if (e.target.tagName === "A") return;
-        map.setView([venue.lat, venue.lng], 16);
-        marker.openPopup();
+        if (hasCoords) {
+          map.setView([venue.lat, venue.lng], 16);
+          if (marker) marker.openPopup();
+        } else {
+          window.open(searchUrl, "_blank");
+        }
         if (activeItem) activeItem.classList.remove("active");
         item.classList.add("active");
         activeItem = item;
