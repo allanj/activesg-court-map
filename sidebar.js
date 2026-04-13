@@ -22,55 +22,46 @@ document.addEventListener("DOMContentLoaded", () => {
   let markers = [];
   let activeItem = null;
 
-  // ── Geocoding with Nominatim (rate-limited, cached) ──
+  // ── Geocoding: pre-built cache → OneMap fallback ──
 
-  const geoCache = {};
-  let geoQueue = [];
-  let geoRunning = false;
+  const runtimeCache = {};
 
   function geocode(name) {
-    return new Promise((resolve) => {
-      const key = name.toLowerCase();
-      if (geoCache[key]) {
-        resolve(geoCache[key]);
-        return;
-      }
-      geoQueue.push({ name, key, resolve });
-      processQueue();
-    });
-  }
+    const key = name.toLowerCase();
 
-  function processQueue() {
-    if (geoRunning || geoQueue.length === 0) return;
-    geoRunning = true;
+    if (runtimeCache[key] !== undefined) {
+      return Promise.resolve(runtimeCache[key]);
+    }
 
-    const { name, key, resolve } = geoQueue.shift();
-    const query = encodeURIComponent(name + ", Singapore");
-    const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1&countrycodes=sg`;
+    if (typeof GEOCACHE !== "undefined" && GEOCACHE[key]) {
+      const entry = GEOCACHE[key];
+      const result = { lat: entry.lat, lng: entry.lng, displayName: entry.display };
+      runtimeCache[key] = result;
+      return Promise.resolve(result);
+    }
 
-    fetch(url, { headers: { "Accept-Language": "en" } })
+    const query = encodeURIComponent(name);
+    const url = `https://www.onemap.gov.sg/api/common/elastic/search?searchVal=${query}&returnGeom=Y&getAddrDetails=Y&pageNum=1`;
+
+    return fetch(url)
       .then((r) => r.json())
       .then((data) => {
-        if (data && data.length > 0) {
+        if (data && data.results && data.results.length > 0) {
+          const r = data.results[0];
           const result = {
-            lat: parseFloat(data[0].lat),
-            lng: parseFloat(data[0].lon),
-            displayName: data[0].display_name,
+            lat: parseFloat(r.LATITUDE),
+            lng: parseFloat(r.LONGITUDE),
+            displayName: r.ADDRESS || r.SEARCHVAL,
           };
-          geoCache[key] = result;
-          resolve(result);
-        } else {
-          geoCache[key] = null;
-          resolve(null);
+          runtimeCache[key] = result;
+          return result;
         }
+        runtimeCache[key] = null;
+        return null;
       })
       .catch(() => {
-        resolve(null);
-      })
-      .finally(() => {
-        geoRunning = false;
-        // Nominatim rate limit: 1 req/sec
-        setTimeout(processQueue, 1100);
+        runtimeCache[key] = null;
+        return null;
       });
   }
 

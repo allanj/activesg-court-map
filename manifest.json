@@ -34,6 +34,7 @@
         "sidebar.html",
         "sidebar.css",
         "sidebar.js",
+        "geocache.js",
         "lib/*"
       ],
       "matches": ["https://activesg.gov.sg/*"]
