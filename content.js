@@ -1,6 +1,11 @@
 (function () {
   "use strict";
 
+  const TILE_ZOOM = 16;
+  const TILE_SIZE = 256;
+  const MAP_W = 260;
+  const MAP_H = 140;
+
   function normalizeVenueName(name) {
     return name.trim().replace(/\s+/g, " ").replace(/\u2019/g, "'");
   }
@@ -33,8 +38,46 @@
     return null;
   }
 
-  function createMapEmbedUrl(lat, lng) {
-    return chrome.runtime.getURL(`map.html?lat=${lat}&lng=${lng}`);
+  // Convert lat/lng to pixel position at a given zoom level
+  function latLngToPixel(lat, lng, zoom) {
+    const n = Math.pow(2, zoom);
+    const x = ((lng + 180) / 360) * n * TILE_SIZE;
+    const latRad = (lat * Math.PI) / 180;
+    const y = ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n * TILE_SIZE;
+    return { x, y };
+  }
+
+  function createTileMap(lat, lng) {
+    const container = document.createElement("div");
+    container.className = "asg-tile-map";
+
+    const center = latLngToPixel(lat, lng, TILE_ZOOM);
+    const startX = center.x - MAP_W / 2;
+    const startY = center.y - MAP_H / 2;
+
+    const tileXMin = Math.floor(startX / TILE_SIZE);
+    const tileXMax = Math.floor((startX + MAP_W) / TILE_SIZE);
+    const tileYMin = Math.floor(startY / TILE_SIZE);
+    const tileYMax = Math.floor((startY + MAP_H) / TILE_SIZE);
+
+    for (let ty = tileYMin; ty <= tileYMax; ty++) {
+      for (let tx = tileXMin; tx <= tileXMax; tx++) {
+        const img = document.createElement("img");
+        img.src = `https://tile.openstreetmap.org/${TILE_ZOOM}/${tx}/${ty}.png`;
+        img.className = "asg-tile";
+        img.style.left = `${tx * TILE_SIZE - startX}px`;
+        img.style.top = `${ty * TILE_SIZE - startY}px`;
+        img.draggable = false;
+        container.appendChild(img);
+      }
+    }
+
+    // Red pin marker at center
+    const pin = document.createElement("div");
+    pin.className = "asg-pin";
+    container.appendChild(pin);
+
+    return container;
   }
 
   function createGoogleMapsLink(lat, lng) {
@@ -45,18 +88,18 @@
     const el = document.createElement("div");
     el.className = "asg-court-map";
     el.setAttribute("data-venue", venue.name);
-    el.innerHTML = `
-      <iframe
-        src="${createMapEmbedUrl(venue.lat, venue.lng)}"
-        class="asg-court-map-iframe"
-        loading="lazy"
-        scrolling="no"
-      ></iframe>
-      <div class="asg-court-map-info">
-        <span class="asg-court-map-addr">${venue.address}</span>
-        <a href="${createGoogleMapsLink(venue.lat, venue.lng)}" target="_blank" rel="noopener" class="asg-court-map-gmaps">Google Maps &rarr;</a>
-      </div>
+
+    const tileMap = createTileMap(venue.lat, venue.lng);
+
+    const info = document.createElement("div");
+    info.className = "asg-court-map-info";
+    info.innerHTML = `
+      <span class="asg-court-map-addr">${venue.address}</span>
+      <a href="${createGoogleMapsLink(venue.lat, venue.lng)}" target="_blank" rel="noopener" class="asg-court-map-gmaps">Google Maps &rarr;</a>
     `;
+
+    el.appendChild(tileMap);
+    el.appendChild(info);
     return el;
   }
 

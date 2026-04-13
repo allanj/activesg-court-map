@@ -46,6 +46,8 @@ Coordinates are sourced from the official ActiveSG Circle website and Singapore'
 ## Development
 
 The extension is built with vanilla JavaScript and uses:
+
 - Chrome Manifest V3
 - OpenStreetMap for map tiles
 - Leaflet.js for the popup overview map
+
