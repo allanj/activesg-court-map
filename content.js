@@ -65,7 +65,7 @@
     const iframe = document.createElement("iframe");
     iframe.id = "asg-sidebar-frame";
     iframe.src = chrome.runtime.getURL("sidebar.html");
-    iframe.setAttribute("allow", "");
+    iframe.setAttribute("allow", "geolocation");
 
     iframe.addEventListener("load", () => {
       sidebarReady = true;

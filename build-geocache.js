@@ -44,14 +44,21 @@ const VENUES = [
   "Compassvale Secondary School Hall",
   "Concord Primary School Hall",
   "Corporation Primary School Hall",
+  "Crescent Girls' School Hall",
   "Crest Secondary School Hall",
   "Damai Primary School Hall",
   "Damai Secondary School Hall",
+  "Dazhong Primary School Hall",
   "Delta Sport Centre",
+  "Delta Sport Hall",
+  "Deyi Secondary School Hall",
+  "Dunman High School Hall",
   "East Spring Primary School Hall",
   "East Spring Secondary School Hall",
   "Edgefield Primary School Hall",
   "Edgefield Secondary School Hall",
+  "Elias Park Primary School Hall",
+  "Endeavour Primary School Hall",
   "Eunos Primary School Hall",
   "Evergreen Primary School Hall",
   "Evergreen Secondary School Hall",
@@ -99,6 +106,7 @@ const VENUES = [
   "Nan Chiau High School Hall",
   "Naval Base Primary School Hall",
   "Naval Base Secondary School Hall",
+  "New Town Primary School Hall",
   "Ngee Ann Primary School Hall",
   "North Vista Primary School Hall",
   "North Vista Secondary School Hall",
@@ -210,20 +218,36 @@ async function geocode(name) {
   return null;
 }
 
+const MANUAL_OVERRIDES = {
+  "bishan clubhouse": { lat: 1.34948, lng: 103.85075, display: "51 BISHAN STREET 13 BISHAN COMMUNITY CLUB SINGAPORE 579799" },
+  "bukit canberra sport centre": { lat: 1.44826, lng: 103.82276, display: "21 CANBERRA LINK BUKIT CANBERRA SINGAPORE 756973" },
+  "si ling secondary school hall": { lat: 1.43254, lng: 103.77407, display: "11 MARSILING LANE SI LING SECONDARY SCHOOL SINGAPORE 739148" },
+  "toa payoh sport centre": { lat: 1.33060, lng: 103.84999, display: "301 LORONG 6 TOA PAYOH SINGAPORE 319392" },
+  "crescent girls' school hall": { lat: 1.28843, lng: 103.80008, display: "357 TANGLIN ROAD CRESCENT GIRLS SCHOOL SINGAPORE 247961" },
+  "delta sport hall": { lat: 1.29008, lng: 103.82266, display: "900 TIONG BAHRU ROAD DELTA SPORTS HALL SINGAPORE 158790" },
+  "eunos primary school hall": { lat: 1.324223, lng: 103.904727, display: "95 JALAN EUNOS EUNOS PRIMARY SCHOOL SINGAPORE 419529" },
+};
+
 async function main() {
   const cache = {};
   let done = 0;
 
   for (const name of VENUES) {
-    const result = await geocode(name);
+    const key = name.toLowerCase();
+    let result = MANUAL_OVERRIDES[key] || null;
+
+    if (!result) {
+      result = await geocode(name);
+      await new Promise((r) => setTimeout(r, 300));
+    }
+
     done++;
     if (result) {
-      cache[name.toLowerCase()] = result;
+      cache[key] = result;
       console.log(`[${done}/${VENUES.length}] ✓ ${name}`);
     } else {
       console.log(`[${done}/${VENUES.length}] ✗ ${name} (not found)`);
     }
-    await new Promise((r) => setTimeout(r, 300));
   }
 
   const js =

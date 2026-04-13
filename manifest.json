@@ -3,6 +3,9 @@
   "name": "ActiveSG Court Map",
   "version": "1.1.0",
   "description": "Shows a sidebar map for each badminton court on the ActiveSG facility bookings page so you know where each venue is.",
+  "background": {
+    "service_worker": "background.js"
+  },
   "permissions": [],
   "host_permissions": [
     "https://www.onemap.gov.sg/*"

@@ -40,29 +40,17 @@ document.addEventListener("DOMContentLoaded", () => {
       return Promise.resolve(result);
     }
 
-    const query = encodeURIComponent(name);
-    const url = `https://www.onemap.gov.sg/api/common/elastic/search?searchVal=${query}&returnGeom=Y&getAddrDetails=Y&pageNum=1`;
-
-    return fetch(url)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data && data.results && data.results.length > 0) {
-          const r = data.results[0];
-          const result = {
-            lat: parseFloat(r.LATITUDE),
-            lng: parseFloat(r.LONGITUDE),
-            displayName: r.ADDRESS || r.SEARCHVAL,
-          };
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage({ type: "geocode", name }, (result) => {
+        if (result) {
           runtimeCache[key] = result;
-          return result;
+          resolve(result);
+        } else {
+          runtimeCache[key] = null;
+          resolve(null);
         }
-        runtimeCache[key] = null;
-        return null;
-      })
-      .catch(() => {
-        runtimeCache[key] = null;
-        return null;
       });
+    });
   }
 
   function googleMapsSearchUrl(name) {
