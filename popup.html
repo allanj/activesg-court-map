@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ActiveSG Court Map</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="header">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+      <circle cx="12" cy="10" r="3"/>
+    </svg>
+    <div>
+      <h1>ActiveSG Court Map</h1>
+      <p>Badminton venues across Singapore</p>
+    </div>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" id="search" placeholder="Search venues..." autocomplete="off" />
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="list">Venues</button>
+    <button class="tab" data-tab="map">Overview Map</button>
+  </div>
+
+  <div class="content" id="content-list">
+    <div class="venue-list" id="venue-list"></div>
+  </div>
+
+  <div class="content hidden" id="content-map">
+    <iframe
+      id="overview-map"
+      class="overview-map"
+      src="https://www.openstreetmap.org/export/embed.html?bbox=103.6%2C1.22%2C104.05%2C1.47&layer=mapnik"
+      scrolling="no"
+    ></iframe>
+    <p class="map-hint">Click a venue in the list for its specific location</p>
+  </div>
+
+  <div class="footer">
+    <a href="https://activesg.gov.sg/facility-bookings/activities/YLONatwvqJfikKOmB5N9U/venues" target="_blank">
+      Open ActiveSG Booking
+    </a>
+    <span class="venue-count" id="venue-count"></span>
+  </div>
+
+  <script src="venues.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "ActiveSG Court Map",
+  "version": "1.0.0",
+  "description": "Shows a rough location map for each court on the ActiveSG facility bookings page so you know where the actual court is.",
+  "permissions": [],
+  "host_permissions": [],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://activesg.gov.sg/*"
+      ],
+      "js": ["venues.js", "content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; frame-src https://www.openstreetmap.org https://*.openstreetmap.org"
+  }
+}
