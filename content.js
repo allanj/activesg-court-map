@@ -34,7 +34,7 @@
   }
 
   function createMapEmbedUrl(lat, lng) {
-    return `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.004}%2C${lat - 0.003}%2C${lng + 0.004}%2C${lat + 0.003}&layer=mapnik&marker=${lat}%2C${lng}`;
+    return chrome.runtime.getURL(`map.html?lat=${lat}&lng=${lng}`);
   }
 
   function createGoogleMapsLink(lat, lng) {

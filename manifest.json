@@ -30,5 +30,11 @@
   },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; frame-src https://www.openstreetmap.org https://*.openstreetmap.org"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["map.html"],
+      "matches": ["https://activesg.gov.sg/*"]
+    }
+  ]
 }
