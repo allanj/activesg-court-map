@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "ActiveSG Court Map",
-  "version": "1.0.0",
-  "description": "Shows a rough location map for each court on the ActiveSG facility bookings page so you know where the actual court is.",
+  "version": "1.1.0",
+  "description": "Shows a sidebar map for each badminton court on the ActiveSG facility bookings page so you know where each venue is.",
   "permissions": [],
   "host_permissions": [],
   "content_scripts": [
@@ -27,5 +27,17 @@
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "sidebar.html",
+        "sidebar.css",
+        "sidebar.js",
+        "venues.js",
+        "lib/*"
+      ],
+      "matches": ["https://activesg.gov.sg/*"]
+    }
+  ]
 }

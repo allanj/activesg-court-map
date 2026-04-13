@@ -1,74 +1,50 @@
-.asg-court-map {
-  margin: 8px 12px 12px;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1px solid #d4d4d4;
-  background: #fff;
-  max-width: 260px;
-}
-
-.asg-tile-map {
-  position: relative;
-  width: 260px;
-  height: 140px;
-  overflow: hidden;
-  background: #e8e8e8;
-}
-
-.asg-tile {
-  position: absolute;
-  width: 256px;
-  height: 256px;
-  display: block;
-  image-rendering: auto;
-  pointer-events: none;
-}
-
-.asg-pin {
-  position: absolute;
-  left: 50%;
+#asg-sidebar-toggle {
+  position: fixed;
+  right: 16px;
   top: 50%;
-  width: 14px;
-  height: 14px;
-  margin-left: -7px;
-  margin-top: -7px;
-  background: #e53935;
-  border: 2.5px solid #fff;
+  transform: translateY(-50%);
+  z-index: 2147483646;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.35);
-  z-index: 1;
-  pointer-events: none;
-}
-
-.asg-court-map-info {
-  padding: 6px 10px;
+  border: none;
+  background: #1a73e8;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  border-top: 1px solid #eee;
-  background: #fafafa;
+  justify-content: center;
+  transition: right 0.3s ease, background 0.15s, transform 0.15s;
 }
 
-.asg-court-map-addr {
-  font-size: 10px;
-  color: #555;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+#asg-sidebar-toggle:hover {
+  background: #1565c0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.asg-court-map-gmaps {
-  font-size: 10px;
-  color: #1a73e8;
-  text-decoration: none;
-  font-weight: 500;
-  white-space: nowrap;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+#asg-sidebar-toggle.open {
+  right: 366px;
 }
 
-.asg-court-map-gmaps:hover {
-  text-decoration: underline;
+#asg-sidebar {
+  position: fixed;
+  top: 0;
+  right: -360px;
+  width: 350px;
+  height: 100vh;
+  z-index: 2147483647;
+  transition: right 0.3s ease;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.15);
+}
+
+#asg-sidebar.open {
+  right: 0;
+}
+
+#asg-sidebar-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
 }

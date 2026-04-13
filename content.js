@@ -1,10 +1,13 @@
 (function () {
   "use strict";
 
-  const TILE_ZOOM = 16;
-  const TILE_SIZE = 256;
-  const MAP_W = 260;
-  const MAP_H = 140;
+  const SIDEBAR_WIDTH = 350;
+  let sidebarOpen = false;
+  let sidebarFrame = null;
+  let sidebarReady = false;
+  let pendingVenues = null;
+
+  // ── Venue matching ──
 
   function normalizeVenueName(name) {
     return name.trim().replace(/\s+/g, " ").replace(/\u2019/g, "'");
@@ -18,172 +21,149 @@
     for (const [key, data] of Object.entries(VENUE_DATABASE)) {
       if (key.toLowerCase() === lower) return { name: key, ...data };
     }
-
     for (const [key, data] of Object.entries(VENUE_DATABASE)) {
-      const keyLower = key.toLowerCase();
-      if (lower.includes(keyLower) || keyLower.includes(lower)) {
-        return { name: key, ...data };
-      }
+      const kl = key.toLowerCase();
+      if (lower.includes(kl) || kl.includes(lower)) return { name: key, ...data };
     }
-
     const words = lower.split(" ").filter((w) => w.length > 3);
     for (const [key, data] of Object.entries(VENUE_DATABASE)) {
-      const keyLower = key.toLowerCase();
-      const matchCount = words.filter((w) => keyLower.includes(w)).length;
-      if (matchCount >= 2 && matchCount >= words.length * 0.5) {
-        return { name: key, ...data };
-      }
-    }
-
-    return null;
-  }
-
-  // Convert lat/lng to pixel position at a given zoom level
-  function latLngToPixel(lat, lng, zoom) {
-    const n = Math.pow(2, zoom);
-    const x = ((lng + 180) / 360) * n * TILE_SIZE;
-    const latRad = (lat * Math.PI) / 180;
-    const y = ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n * TILE_SIZE;
-    return { x, y };
-  }
-
-  function createTileMap(lat, lng) {
-    const container = document.createElement("div");
-    container.className = "asg-tile-map";
-
-    const center = latLngToPixel(lat, lng, TILE_ZOOM);
-    const startX = center.x - MAP_W / 2;
-    const startY = center.y - MAP_H / 2;
-
-    const tileXMin = Math.floor(startX / TILE_SIZE);
-    const tileXMax = Math.floor((startX + MAP_W) / TILE_SIZE);
-    const tileYMin = Math.floor(startY / TILE_SIZE);
-    const tileYMax = Math.floor((startY + MAP_H) / TILE_SIZE);
-
-    for (let ty = tileYMin; ty <= tileYMax; ty++) {
-      for (let tx = tileXMin; tx <= tileXMax; tx++) {
-        const img = document.createElement("img");
-        img.src = `https://tile.openstreetmap.org/${TILE_ZOOM}/${tx}/${ty}.png`;
-        img.className = "asg-tile";
-        img.style.left = `${tx * TILE_SIZE - startX}px`;
-        img.style.top = `${ty * TILE_SIZE - startY}px`;
-        img.draggable = false;
-        container.appendChild(img);
-      }
-    }
-
-    // Red pin marker at center
-    const pin = document.createElement("div");
-    pin.className = "asg-pin";
-    container.appendChild(pin);
-
-    return container;
-  }
-
-  function createGoogleMapsLink(lat, lng) {
-    return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-  }
-
-  function createInlineMap(venue) {
-    const el = document.createElement("div");
-    el.className = "asg-court-map";
-    el.setAttribute("data-venue", venue.name);
-
-    const tileMap = createTileMap(venue.lat, venue.lng);
-
-    const info = document.createElement("div");
-    info.className = "asg-court-map-info";
-    info.innerHTML = `
-      <span class="asg-court-map-addr">${venue.address}</span>
-      <a href="${createGoogleMapsLink(venue.lat, venue.lng)}" target="_blank" rel="noopener" class="asg-court-map-gmaps">Google Maps &rarr;</a>
-    `;
-
-    el.appendChild(tileMap);
-    el.appendChild(info);
-    return el;
-  }
-
-  function findCardContainer(el) {
-    let current = el;
-    for (let i = 0; i < 8; i++) {
-      if (!current.parentElement || current.parentElement === document.body) break;
-      current = current.parentElement;
-      const style = window.getComputedStyle(current);
-      const hasBorder = style.borderWidth && style.borderWidth !== "0px";
-      const hasShadow = style.boxShadow && style.boxShadow !== "none";
-      const hasBg = style.backgroundColor && style.backgroundColor !== "rgba(0, 0, 0, 0)" && style.backgroundColor !== "transparent";
-      const hasRadius = style.borderRadius && style.borderRadius !== "0px";
-
-      if ((hasBorder || hasShadow) && (hasBg || hasRadius)) {
-        return current;
-      }
+      const kl = key.toLowerCase();
+      const hits = words.filter((w) => kl.includes(w)).length;
+      if (hits >= 2 && hits >= words.length * 0.5) return { name: key, ...data };
     }
     return null;
-  }
-
-  function processPage() {
-    const processedVenues = new Set();
-
-    document.querySelectorAll(".asg-court-map").forEach((el) => {
-      processedVenues.add(el.getAttribute("data-venue"));
-    });
-
-    const allElements = document.querySelectorAll(
-      'h1, h2, h3, h4, h5, h6, a, span, p, div, [role="heading"], [role="listitem"], [role="option"], li'
-    );
-
-    for (const el of allElements) {
-      if (el.closest(".asg-court-map")) continue;
-
-      const directText = getDirectText(el);
-      if (!directText || directText.length < 5 || directText.length > 120) continue;
-
-      const venue = findVenue(directText);
-      if (!venue) continue;
-      if (processedVenues.has(venue.name)) continue;
-
-      const card = findCardContainer(el);
-      const target = card || el.parentElement;
-      if (!target) continue;
-
-      if (target.querySelector(".asg-court-map")) continue;
-
-      processedVenues.add(venue.name);
-      const mapWidget = createInlineMap(venue);
-      target.appendChild(mapWidget);
-    }
   }
 
   function getDirectText(el) {
-    let text = "";
-    for (const node of el.childNodes) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        text += node.textContent;
-      }
+    let t = "";
+    for (const n of el.childNodes) {
+      if (n.nodeType === Node.TEXT_NODE) t += n.textContent;
     }
-    return text.trim();
+    return t.trim();
   }
 
-  function init() {
-    processPage();
-
-    const observer = new MutationObserver((mutations) => {
-      let hasNewContent = false;
-      for (const m of mutations) {
-        for (const node of m.addedNodes) {
-          if (node.nodeType === Node.ELEMENT_NODE && !node.classList?.contains("asg-court-map")) {
-            hasNewContent = true;
-            break;
-          }
-        }
-        if (hasNewContent) break;
+  function scanPageVenues() {
+    const found = new Map();
+    const els = document.querySelectorAll(
+      'h1,h2,h3,h4,h5,h6,a,span,p,div,[role="heading"],[role="listitem"],[role="option"],li'
+    );
+    for (const el of els) {
+      const text = getDirectText(el);
+      if (!text || text.length < 5 || text.length > 120) continue;
+      const venue = findVenue(text);
+      if (venue && !found.has(venue.name)) {
+        found.set(venue.name, { ...venue, onPage: true });
       }
-      if (hasNewContent) {
-        clearTimeout(window._asgMapDebounce);
-        window._asgMapDebounce = setTimeout(processPage, 600);
+    }
+    return Array.from(found.values());
+  }
+
+  // ── Sidebar injection ──
+
+  function createToggleButton() {
+    const btn = document.createElement("button");
+    btn.id = "asg-sidebar-toggle";
+    btn.title = "Toggle Court Map";
+    btn.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+        <circle cx="12" cy="10" r="3"/>
+      </svg>
+    `;
+    btn.addEventListener("click", toggleSidebar);
+    document.body.appendChild(btn);
+    return btn;
+  }
+
+  function createSidebar() {
+    const container = document.createElement("div");
+    container.id = "asg-sidebar";
+
+    const iframe = document.createElement("iframe");
+    iframe.id = "asg-sidebar-frame";
+    iframe.src = chrome.runtime.getURL("sidebar.html");
+    iframe.setAttribute("allow", "");
+
+    iframe.addEventListener("load", () => {
+      sidebarReady = true;
+      if (pendingVenues) {
+        sendVenuesToSidebar(pendingVenues);
+        pendingVenues = null;
       }
     });
 
+    container.appendChild(iframe);
+    document.body.appendChild(container);
+    sidebarFrame = iframe;
+    return container;
+  }
+
+  function toggleSidebar() {
+    sidebarOpen = !sidebarOpen;
+    const sidebar = document.getElementById("asg-sidebar");
+    const toggle = document.getElementById("asg-sidebar-toggle");
+
+    if (sidebarOpen) {
+      sidebar.classList.add("open");
+      toggle.classList.add("open");
+      rescanAndSend();
+    } else {
+      sidebar.classList.remove("open");
+      toggle.classList.remove("open");
+    }
+  }
+
+  function sendVenuesToSidebar(venues) {
+    if (!sidebarFrame || !sidebarReady) {
+      pendingVenues = venues;
+      return;
+    }
+    sidebarFrame.contentWindow.postMessage({ type: "asg-venues", venues }, "*");
+  }
+
+  function rescanAndSend() {
+    const venues = scanPageVenues();
+    sendVenuesToSidebar(venues);
+  }
+
+  // ── SPA navigation detection ──
+
+  let lastUrl = location.href;
+
+  function watchNavigation() {
+    const check = () => {
+      if (location.href !== lastUrl) {
+        lastUrl = location.href;
+        setTimeout(rescanAndSend, 800);
+      }
+    };
+
+    const origPush = history.pushState;
+    history.pushState = function () {
+      origPush.apply(this, arguments);
+      check();
+    };
+    const origReplace = history.replaceState;
+    history.replaceState = function () {
+      origReplace.apply(this, arguments);
+      check();
+    };
+    window.addEventListener("popstate", check);
+  }
+
+  // ── Init ──
+
+  function init() {
+    createToggleButton();
+    createSidebar();
+    watchNavigation();
+
+    const observer = new MutationObserver(() => {
+      if (sidebarOpen) {
+        clearTimeout(window._asgRescan);
+        window._asgRescan = setTimeout(rescanAndSend, 800);
+      }
+    });
     observer.observe(document.body, { childList: true, subtree: true });
   }
 
