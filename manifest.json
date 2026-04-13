@@ -4,7 +4,9 @@
   "version": "1.1.0",
   "description": "Shows a sidebar map for each badminton court on the ActiveSG facility bookings page so you know where each venue is.",
   "permissions": [],
-  "host_permissions": [],
+  "host_permissions": [
+    "https://www.onemap.gov.sg/*"
+  ],
   "content_scripts": [
     {
       "matches": [
