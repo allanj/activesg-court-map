@@ -1,37 +1,22 @@
 (function () {
   "use strict";
 
-  const SIDEBAR_WIDTH = 350;
   let sidebarOpen = false;
   let sidebarFrame = null;
   let sidebarReady = false;
   let pendingVenues = null;
 
-  // ── Venue matching ──
+  // ── Venue name extraction (no database) ──
 
-  function normalizeVenueName(name) {
-    return name.trim().replace(/\s+/g, " ").replace(/\u2019/g, "'");
-  }
+  const VENUE_KEYWORDS = [
+    "school hall", "sport hall", "sports hall",
+    "sport centre", "sports centre", "community centre",
+    "clubhouse", "tampines hub",
+  ];
 
-  function findVenue(name) {
-    const normalized = normalizeVenueName(name);
-    if (VENUE_DATABASE[normalized]) return { name: normalized, ...VENUE_DATABASE[normalized] };
-
-    const lower = normalized.toLowerCase();
-    for (const [key, data] of Object.entries(VENUE_DATABASE)) {
-      if (key.toLowerCase() === lower) return { name: key, ...data };
-    }
-    for (const [key, data] of Object.entries(VENUE_DATABASE)) {
-      const kl = key.toLowerCase();
-      if (lower.includes(kl) || kl.includes(lower)) return { name: key, ...data };
-    }
-    const words = lower.split(" ").filter((w) => w.length > 3);
-    for (const [key, data] of Object.entries(VENUE_DATABASE)) {
-      const kl = key.toLowerCase();
-      const hits = words.filter((w) => kl.includes(w)).length;
-      if (hits >= 2 && hits >= words.length * 0.5) return { name: key, ...data };
-    }
-    return null;
+  function looksLikeVenueName(text) {
+    const lower = text.toLowerCase();
+    return VENUE_KEYWORDS.some((kw) => lower.includes(kw));
   }
 
   function getDirectText(el) {
@@ -42,20 +27,6 @@
     return t.trim();
   }
 
-  function looksLikeVenueName(text) {
-    const lower = text.toLowerCase();
-    return (
-      lower.includes("school hall") ||
-      lower.includes("sport hall") ||
-      lower.includes("sports hall") ||
-      lower.includes("sport centre") ||
-      lower.includes("sports centre") ||
-      lower.includes("community centre") ||
-      lower.includes("clubhouse") ||
-      lower.includes("tampines hub")
-    );
-  }
-
   function scanPageVenues() {
     const found = new Map();
     const els = document.querySelectorAll(
@@ -64,20 +35,8 @@
     for (const el of els) {
       const text = getDirectText(el);
       if (!text || text.length < 5 || text.length > 120) continue;
-
-      const venue = findVenue(text);
-      if (venue && !found.has(venue.name)) {
-        found.set(venue.name, { ...venue, onPage: true });
-      } else if (!venue && looksLikeVenueName(text) && !found.has(text)) {
-        found.set(text, {
-          name: text,
-          lat: null,
-          lng: null,
-          address: "",
-          region: "",
-          onPage: true,
-          unmatched: true,
-        });
+      if (looksLikeVenueName(text) && !found.has(text)) {
+        found.set(text, { name: text, onPage: true });
       }
     }
     return Array.from(found.values());
@@ -97,7 +56,6 @@
     `;
     btn.addEventListener("click", toggleSidebar);
     document.body.appendChild(btn);
-    return btn;
   }
 
   function createSidebar() {
@@ -120,7 +78,6 @@
     container.appendChild(iframe);
     document.body.appendChild(container);
     sidebarFrame = iframe;
-    return container;
   }
 
   function toggleSidebar() {
@@ -162,7 +119,6 @@
         setTimeout(rescanAndSend, 800);
       }
     };
-
     const origPush = history.pushState;
     history.pushState = function () {
       origPush.apply(this, arguments);

@@ -10,7 +10,7 @@
       "matches": [
         "https://activesg.gov.sg/*"
       ],
-      "js": ["venues.js", "content.js"],
+      "js": ["content.js"],
       "css": ["content.css"],
       "run_at": "document_idle"
     }
@@ -34,7 +34,6 @@
         "sidebar.html",
         "sidebar.css",
         "sidebar.js",
-        "venues.js",
         "lib/*"
       ],
       "matches": ["https://activesg.gov.sg/*"]
