@@ -345,10 +345,30 @@ const GEOCACHE = {
     "lng": 103.931710293058,
     "display": "307 BEDOK NORTH ROAD FENGSHAN PRIMARY SCHOOL SINGAPORE 469680"
   },
+  "fern green primary school hall": {
+    "lat": 1.39726966050479,
+    "lng": 103.880330305684,
+    "display": "70 FERNVALE LINK FERN GREEN PRIMARY SCHOOL SINGAPORE 797538"
+  },
+  "first toa payoh primary school hall": {
+    "lat": 1.3327,
+    "lng": 103.8492,
+    "display": "1 TOA PAYOH LORONG 4 FIRST TOA PAYOH PRIMARY SCHOOL SINGAPORE 319693"
+  },
+  "frontier primary school hall": {
+    "lat": 1.33641298743234,
+    "lng": 103.69970173931,
+    "display": "20 JURONG WEST STREET 61 FRONTIER PRIMARY SCHOOL SINGAPORE 648200"
+  },
   "fuhua primary school hall": {
     "lat": 1.33659726465816,
     "lng": 103.736089481883,
     "display": "65 JURONG EAST STREET 13 AMP-MERCU STUDENT CARE CENTRE @ FUHUA PRIMARY SCHOOL"
+  },
+  "fuhua secondary school hall": {
+    "lat": 1.34701408913756,
+    "lng": 103.72652089832,
+    "display": "5 JURONG WEST STREET 41 FUHUA SECONDARY SCHOOL SINGAPORE 649410"
   },
   "gan eng seng primary school hall": {
     "lat": 1.28559516494962,
@@ -390,10 +410,25 @@ const GEOCACHE = {
     "lng": 103.763998914082,
     "display": "31 GANGSA ROAD GREENRIDGE SECONDARY SCHOOL SINGAPORE 678972"
   },
+  "greenwood primary school hall": {
+    "lat": 1.43989958331782,
+    "lng": 103.804725587384,
+    "display": "11 WOODLANDS DRIVE 62 GREENWOOD PRIMARY SCHOOL SINGAPORE 737942"
+  },
+  "heartbeat @ bedok activesg sport hall": {
+    "lat": 1.32694,
+    "lng": 103.932,
+    "display": "11 BEDOK NORTH STREET 1 HEARTBEAT@BEDOK SINGAPORE 469662"
+  },
   "heartbeat@bedok activesg sport centre": {
-    "lat": 1.32704197090859,
-    "lng": 103.932394011989,
-    "display": "11 BEDOK NORTH STREET 1 HEARTBEAT @ BEDOK ACTIVESG SPORT CENTRE"
+    "lat": 1.32694,
+    "lng": 103.932,
+    "display": "11 BEDOK NORTH STREET 1 HEARTBEAT@BEDOK SINGAPORE 469662"
+  },
+  "henry park primary school hall": {
+    "lat": 1.31667646178347,
+    "lng": 103.784296227747,
+    "display": "1 HOLLAND GROVE ROAD HENRY PARK PRIMARY SCHOOL SINGAPORE 278790"
   },
   "hillgrove secondary school hall": {
     "lat": 1.35273576615912,
@@ -444,6 +479,11 @@ const GEOCACHE = {
     "lat": 1.30952190174503,
     "lng": 103.860211336261,
     "display": "100 TYRWHITT ROAD JALAN BESAR SPORTS CENTRE"
+  },
+  "jiemin primary school hall": {
+    "lat": 1.42768847665227,
+    "lng": 103.830425490093,
+    "display": "2 YISHUN STREET 71 JIEMIN PRIMARY SCHOOL SINGAPORE 768515"
   },
   "jing shan primary school hall": {
     "lat": 1.37223290983498,
@@ -540,6 +580,11 @@ const GEOCACHE = {
     "lng": 103.776008090454,
     "display": "12 MARSILING ROAD MARSILING SECONDARY SCHOOL SINGAPORE 739110"
   },
+  "mayflower secondary school hall": {
+    "lat": 1.36827266209722,
+    "lng": 103.835360726863,
+    "display": "2 ANG MO KIO STREET 21 MAYFLOWER SECONDARY SCHOOL SINGAPORE 569384"
+  },
   "meridian primary school hall": {
     "lat": 1.37552831658484,
     "lng": 103.934889078518,
@@ -549,6 +594,11 @@ const GEOCACHE = {
     "lat": 1.3672468492013,
     "lng": 103.948972483629,
     "display": "31 PASIR RIS STREET 51 MERIDIAN SECONDARY SCHOOL SINGAPORE 518901"
+  },
+  "moe (evans) sport hall": {
+    "lat": 1.31368,
+    "lng": 103.8205,
+    "display": "21 EVANS ROAD MOE (EVANS) SPORTS HALL SINGAPORE 259366"
   },
   "montfort junior school hall": {
     "lat": 1.37362445234082,
@@ -585,10 +635,20 @@ const GEOCACHE = {
     "lng": 103.80010216304,
     "display": "300 TANGLIN HALT ROAD NEW TOWN PRIMARY SCHOOL SINGAPORE 148812"
   },
+  "new town secondary school hall": {
+    "lat": 1.30977590011357,
+    "lng": 103.77318863421,
+    "display": "1020 DOVER ROAD NEW TOWN SECONDARY SCHOOL SINGAPORE 139657"
+  },
   "ngee ann primary school hall": {
     "lat": 1.30552505910497,
     "lng": 103.917463017497,
     "display": "344 MARINE TERRACE NGEE ANN PRIMARY SCHOOL SINGAPORE 449149"
+  },
+  "north view primary school hall": {
+    "lat": 1.42752327193727,
+    "lng": 103.848190787869,
+    "display": "210 YISHUN AVENUE 6 NORTH VIEW PRIMARY SCHOOL SINGAPORE 768960"
   },
   "north vista primary school hall": {
     "lat": 1.38282243016299,
@@ -605,6 +665,21 @@ const GEOCACHE = {
     "lng": 103.845147332528,
     "display": "585 YISHUN RING ROAD NORTHBROOKS SECONDARY SCHOOL SINGAPORE 768692"
   },
+  "northland primary school hall": {
+    "lat": 1.42096989918951,
+    "lng": 103.840928424929,
+    "display": "15 YISHUN AVENUE 4 NORTHLAND PRIMARY SCHOOL SINGAPORE 769026"
+  },
+  "northland secondary school hall": {
+    "lat": 1.43580183362637,
+    "lng": 103.840104687784,
+    "display": "3 YISHUN STREET 22 NORTHLAND SECONDARY SCHOOL SINGAPORE 768578"
+  },
+  "northoaks primary school hall": {
+    "lat": 1.45660782030102,
+    "lng": 103.814196981329,
+    "display": "61 SEMBAWANG DRIVE NORTHOAKS PRIMARY SCHOOL SINGAPORE 757622"
+  },
   "oasis primary school hall": {
     "lat": 1.40462413200793,
     "lng": 103.911120600638,
@@ -615,10 +690,30 @@ const GEOCACHE = {
     "lng": 103.940381104547,
     "display": "1 TAMPINES WALK HAWKER CENTRE @ OUR TAMPINES HUB"
   },
+  "our tampines hub - community auditorium": {
+    "lat": 1.35253,
+    "lng": 103.94048,
+    "display": "1 TAMPINES WALK OUR TAMPINES HUB SINGAPORE 528523"
+  },
   "palm view primary school hall": {
     "lat": 1.38376923022123,
     "lng": 103.891354675017,
     "display": "150 COMPASSVALE BOW PALM VIEW PRIMARY SCHOOL SINGAPORE 544822"
+  },
+  "park view primary school hall": {
+    "lat": 1.37738069854249,
+    "lng": 103.939541695654,
+    "display": "60 PASIR RIS DRIVE 1 PARK VIEW PRIMARY SCHOOL SINGAPORE 519524"
+  },
+  "pasir ris crest secondary school hall": {
+    "lat": 1.37284060102246,
+    "lng": 103.959728202919,
+    "display": "11 PASIR RIS STREET 41 PASIR RIS CREST SECONDARY SCHOOL SINGAPORE 518934"
+  },
+  "pasir ris secondary school hall": {
+    "lat": 1.37284060102246,
+    "lng": 103.959728202919,
+    "display": "11 PASIR RIS STREET 41 PASIR RIS CREST SECONDARY SCHOOL SINGAPORE 518934"
   },
   "pasir ris sport centre": {
     "lat": 1.37443844465036,
@@ -640,10 +735,30 @@ const GEOCACHE = {
     "lng": 103.878461745339,
     "display": "21 FERNVALE LINK PEI HWA SECONDARY SCHOOL SINGAPORE 797702"
   },
+  "peicai secondary school hall": {
+    "lat": 1.35951583222214,
+    "lng": 103.870010749055,
+    "display": "10 SERANGOON AVENUE 4 PEICAI SECONDARY SCHOOL SINGAPORE 556094"
+  },
+  "peirce secondary school hall": {
+    "lat": 1.36665944653812,
+    "lng": 103.83021606804,
+    "display": "10 SIN MING WALK PEIRCE SECONDARY SCHOOL SINGAPORE 575566"
+  },
+  "peiying primary school hall": {
+    "lat": 1.41741627551251,
+    "lng": 103.830143209875,
+    "display": "651 YISHUN RING ROAD COMMIT LEARNING SCHOOLHOUSE @ PEIYING PRIMARY SCHOOL"
+  },
   "pioneer primary school hall": {
     "lat": 1.35442592930738,
     "lng": 103.732790920197,
     "display": "80 TENGAH GARDEN AVENUE PIONEER PRIMARY SCHOOL SINGAPORE 699915"
+  },
+  "poi ching school hall": {
+    "lat": 1.3473,
+    "lng": 103.9346,
+    "display": "21 TAMPINES STREET 71 POI CHING SCHOOL SINGAPORE 529065"
   },
   "punggol green primary school hall": {
     "lat": 1.40172590450528,
@@ -665,6 +780,16 @@ const GEOCACHE = {
     "lng": 103.905156371376,
     "display": "9 PUNGGOL PLACE PUNGGOL VIEW PRIMARY SCHOOL SINGAPORE 828845"
   },
+  "qifa primary school hall": {
+    "lat": 1.3132658326807,
+    "lng": 103.756629101811,
+    "display": "50 WEST COAST AVENUE AMP-MERCU STUDENT CARE CENTRE @ QIFA PRIMARY SCHOOL"
+  },
+  "qihua primary school hall": {
+    "lat": 1.44203596557592,
+    "lng": 103.788339762066,
+    "display": "5 WOODLANDS STREET 81 POWERLIFE STUDENT SERVICES @ QIHUA PRIMARY SCHOOL"
+  },
   "queenstown primary school hall": {
     "lat": 1.29559365009015,
     "lng": 103.807548617332,
@@ -684,6 +809,16 @@ const GEOCACHE = {
     "lat": 1.30022271592188,
     "lng": 103.802207291625,
     "display": "2A MARGARET DRIVE QUEENSWAY SECONDARY SCHOOL SINGAPORE 149295"
+  },
+  "radin mas primary school hall": {
+    "lat": 1.26995224568504,
+    "lng": 103.824037317867,
+    "display": "MOUNT FABER ROAD KERAMAT RADIN MAS"
+  },
+  "red swastika school hall": {
+    "lat": 1.326,
+    "lng": 103.9308,
+    "display": "11 BEDOK NORTH STREET 1 RED SWASTIKA SCHOOL SINGAPORE 469662"
   },
   "rivervale primary school hall": {
     "lat": 1.39340997767762,
@@ -715,6 +850,16 @@ const GEOCACHE = {
     "lng": 103.816843258118,
     "display": "30 SEMBAWANG CRESCENT SEMBAWANG SECONDARY SCHOOL SINGAPORE 757704"
   },
+  "seng kang primary school hall": {
+    "lat": 1.38949740422462,
+    "lng": 103.899767112047,
+    "display": "21 COMPASSVALE WALK SENG KANG PRIMARY SCHOOL SINGAPORE 545166"
+  },
+  "seng kang secondary school hall": {
+    "lat": 1.38659683143747,
+    "lng": 103.898365036709,
+    "display": "10 COMPASSVALE LANE SENG KANG SECONDARY SCHOOL SINGAPORE 545090"
+  },
   "sengkang green primary school hall": {
     "lat": 1.39284606680477,
     "lng": 103.875217666486,
@@ -731,9 +876,29 @@ const GEOCACHE = {
     "display": "57 ANCHORVALE ROAD SENGKANG SPORTS CENTRE"
   },
   "senja-cashew community centre": {
-    "lat": 1.3816381331934,
-    "lng": 103.764676250968,
-    "display": "101 BUKIT PANJANG ROAD SENJA-CASHEW COMMUNITY CLUB SINGAPORE 679910"
+    "lat": 1.38171,
+    "lng": 103.76687,
+    "display": "101 BUKIT PANJANG ROAD SENJA-CASHEW CC SINGAPORE 679910"
+  },
+  "senja-cashew sport hall": {
+    "lat": 1.38171,
+    "lng": 103.76687,
+    "display": "101 BUKIT PANJANG ROAD SENJA-CASHEW CC SINGAPORE 679910"
+  },
+  "serangoon garden secondary school hall": {
+    "lat": 1.36932570490947,
+    "lng": 103.869270301476,
+    "display": "21 SERANGOON NORTH AVENUE 1 SERANGOON GARDEN SECONDARY SCHOOL SINGAPORE 555889"
+  },
+  "serangoon secondary school hall": {
+    "lat": 1.36932570490947,
+    "lng": 103.869270301476,
+    "display": "21 SERANGOON NORTH AVENUE 1 SERANGOON GARDEN SECONDARY SCHOOL SINGAPORE 555889"
+  },
+  "shuqun primary school hall": {
+    "lat": 1.34765311431632,
+    "lng": 103.721523713379,
+    "display": "8 JURONG WEST STREET 51 SHUQUN PRIMARY SCHOOL SINGAPORE 649332"
   },
   "si ling primary school hall": {
     "lat": 1.43240935732525,
@@ -745,6 +910,11 @@ const GEOCACHE = {
     "lng": 103.77407,
     "display": "11 MARSILING LANE SI LING SECONDARY SCHOOL SINGAPORE 739148"
   },
+  "south view primary school hall": {
+    "lat": 1.38166664389749,
+    "lng": 103.746275846011,
+    "display": "6 CHOA CHU KANG CENTRAL SOUTH VIEW PRIMARY SCHOOL SINGAPORE 689762"
+  },
   "springdale primary school hall": {
     "lat": 1.39467010299293,
     "lng": 103.889926221247,
@@ -754,6 +924,21 @@ const GEOCACHE = {
     "lat": 1.34957303471476,
     "lng": 103.930354460693,
     "display": "30 TAMPINES AVENUE 8 SPRINGFIELD SECONDARY SCHOOL SINGAPORE 529593"
+  },
+  "st. anthony's primary school hall": {
+    "lat": 1.30827,
+    "lng": 103.83145,
+    "display": "30 VICTORIA STREET ST ANTHONYS PRIMARY SCHOOL SINGAPORE 187996"
+  },
+  "st. gabriel's secondary school hall": {
+    "lat": 1.35025,
+    "lng": 103.8938,
+    "display": "5 UPPER SERANGOON ROAD ST GABRIELS SECONDARY SCHOOL SINGAPORE 347837"
+  },
+  "swiss cottage secondary school hall": {
+    "lat": 1.34,
+    "lng": 103.782,
+    "display": "7 BUKIT BATOK STREET 34 SWISS COTTAGE SECONDARY SCHOOL SINGAPORE 659322"
   },
   "tampines north community centre": {
     "lat": 1.35736479273941,
@@ -779,6 +964,11 @@ const GEOCACHE = {
     "lat": 1.30873515955341,
     "lng": 103.897225196199,
     "display": "130 HAIG ROAD TANJONG KATONG SECONDARY SCHOOL SINGAPORE 438796"
+  },
+  "teck ghee primary school hall": {
+    "lat": 1.36558782075966,
+    "lng": 103.850957126982,
+    "display": "1 ANG MO KIO STREET 32 TECK GHEE PRIMARY SCHOOL SINGAPORE 569299"
   },
   "temasek primary school hall": {
     "lat": 1.31770677551333,
@@ -810,6 +1000,21 @@ const GEOCACHE = {
     "lng": 103.746822625758,
     "display": "21 CHOA CHU KANG CRESCENT UNITY PRIMARY SCHOOL SINGAPORE 688268"
   },
+  "unity secondary school hall": {
+    "lat": 1.40001524119441,
+    "lng": 103.74602091483,
+    "display": "20 CHOA CHU KANG STREET 62 UNITY SECONDARY SCHOOL SINGAPORE 689143"
+  },
+  "waterway primary school hall": {
+    "lat": 1.39882800626578,
+    "lng": 103.918621581556,
+    "display": "70 PUNGGOL DRIVE WATERWAY PRIMARY SCHOOL SINGAPORE 828802"
+  },
+  "wellington primary school hall": {
+    "lat": 1.45192019155475,
+    "lng": 103.822303719094,
+    "display": "10 WELLINGTON CIRCLE WELLINGTON PRIMARY SCHOOL SINGAPORE 757702"
+  },
   "west spring primary school hall": {
     "lat": 1.38944145898943,
     "lng": 103.766195711835,
@@ -819,6 +1024,11 @@ const GEOCACHE = {
     "lat": 1.38782283303782,
     "lng": 103.760128840155,
     "display": "61 SENJA ROAD WEST SPRING SECONDARY SCHOOL SINGAPORE 677737"
+  },
+  "west view primary school hall": {
+    "lat": 1.38378546546228,
+    "lng": 103.760273432258,
+    "display": "31 SENJA ROAD BIG HEART STUDENT CARE (WEST VIEW PRIMARY SCHOOL)"
   },
   "westwood primary school hall": {
     "lat": 1.34718456606375,
@@ -834,6 +1044,11 @@ const GEOCACHE = {
     "lat": 1.36563610941695,
     "lng": 103.960861814678,
     "display": "2 PASIR RIS STREET 11 LEARNING LEAP PTE LTD (WHITE SANDS PRIMARY SCHOOL)"
+  },
+  "whitley secondary school hall": {
+    "lat": 1.35505208480649,
+    "lng": 103.842552378136,
+    "display": "30 BISHAN STREET 24 WHITLEY SECONDARY SCHOOL SINGAPORE 579747"
   },
   "woodgrove primary school hall": {
     "lat": 1.43273620725049,
@@ -860,6 +1075,11 @@ const GEOCACHE = {
     "lng": 103.777625748539,
     "display": "21 WOODLANDS AVENUE 1 WOODLANDS RING SECONDARY SCHOOL (TILL JAN 2029) SINGAPORE 739062"
   },
+  "woodlands secondary school hall": {
+    "lat": 1.43070452883799,
+    "lng": 103.777625748539,
+    "display": "21 WOODLANDS AVENUE 1 WOODLANDS RING SECONDARY SCHOOL (TILL JAN 2029) SINGAPORE 739062"
+  },
   "woodlands sport centre": {
     "lat": 1.4350799762723,
     "lng": 103.780505107227,
@@ -870,6 +1090,11 @@ const GEOCACHE = {
     "lng": 103.77985009679,
     "display": "2 WOODLANDS STREET 12 WOODLANDS SPORTS HALL SINGAPORE 738620"
   },
+  "xinghua primary school hall": {
+    "lat": 1.35790893589535,
+    "lng": 103.890472887906,
+    "display": "45 HOUGANG AVENUE 1 XINGHUA PRIMARY SCHOOL SINGAPORE 538882"
+  },
   "xinmin primary school hall": {
     "lat": 1.37139548941931,
     "lng": 103.883080767491,
@@ -879,6 +1104,11 @@ const GEOCACHE = {
     "lat": 1.37255884700002,
     "lng": 103.88305161385,
     "display": "11 HOUGANG AVENUE 8 XINMIN SECONDARY SCHOOL SINGAPORE 538789"
+  },
+  "yio chu kang primary school hall": {
+    "lat": 1.37793264345276,
+    "lng": 103.885643682171,
+    "display": "1 HOUGANG STREET 51 YIO CHU KANG PRIMARY SCHOOL SINGAPORE 538720"
   },
   "yio chu kang sport centre": {
     "lat": 1.38227243947685,
@@ -915,6 +1145,11 @@ const GEOCACHE = {
     "lng": 103.838094226361,
     "display": "6 YISHUN STREET 21 YISHUN TOWN SECONDARY SCHOOL SINGAPORE 768610"
   },
+  "yuan ching secondary school hall": {
+    "lat": 1.34200635764467,
+    "lng": 103.72089870437,
+    "display": "103 YUAN CHING ROAD YUAN CHING SECONDARY SCHOOL SINGAPORE 618654"
+  },
   "yuhua primary school hall": {
     "lat": 1.34280230475033,
     "lng": 103.741105772644,
@@ -939,5 +1174,15 @@ const GEOCACHE = {
     "lat": 1.38836583415352,
     "lng": 103.765510638527,
     "display": "62 BUKIT PANJANG RING ROAD ZHENGHUA SECONDARY SCHOOL SINGAPORE 679962"
+  },
+  "zhonghua primary school hall": {
+    "lat": 1.36026072476019,
+    "lng": 103.869712517383,
+    "display": "12 SERANGOON AVENUE 4 LEARNING STUDIO BY ZENITANT (ZHONGHUA PRIMARY SCHOOL)"
+  },
+  "zhonghua secondary school hall": {
+    "lat": 1.34840720846208,
+    "lng": 103.869430481414,
+    "display": "13 SERANGOON AVENUE 3 ZHONGHUA SECONDARY SCHOOL SINGAPORE 556123"
   }
 };
