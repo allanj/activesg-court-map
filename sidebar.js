@@ -69,6 +69,28 @@ document.addEventListener("DOMContentLoaded", () => {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + " Singapore")}`;
   }
 
+  // ── Distance helpers ──
+
+  function haversineKm(lat1, lng1, lat2, lng2) {
+    const R = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLng = ((lng2 - lng1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function formatDistance(km) {
+    return km < 1 ? `${Math.round(km * 1000)}m` : `${km.toFixed(1)}km`;
+  }
+
+  let userLocation = null;
+  let userMarker = null;
+  let sortByNearest = false;
+
   // ── Rendering ──
 
   function clearMarkers() {
@@ -84,11 +106,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function renderVenues(venues, filter) {
+  async function renderVenues(venues, filter) {
     const query = (filter || "").toLowerCase();
-    const filtered = query
+    let filtered = query
       ? venues.filter((v) => v.name.toLowerCase().includes(query))
-      : venues;
+      : [...venues];
 
     clearMarkers();
     venueListEl.innerHTML = "";
@@ -99,75 +121,144 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    let geocoded = 0;
-    statusEl.textContent = `Locating 0/${filtered.length}...`;
+    statusEl.textContent = `Locating venues...`;
 
-    filtered.forEach((venue, idx) => {
+    const resolved = await Promise.all(
+      filtered.map(async (venue) => {
+        const result = await geocode(venue.name);
+        return { venue, result };
+      })
+    );
+
+    if (sortByNearest && userLocation) {
+      resolved.sort((a, b) => {
+        if (!a.result && !b.result) return 0;
+        if (!a.result) return 1;
+        if (!b.result) return -1;
+        const distA = haversineKm(userLocation.lat, userLocation.lng, a.result.lat, a.result.lng);
+        const distB = haversineKm(userLocation.lat, userLocation.lng, b.result.lat, b.result.lng);
+        return distA - distB;
+      });
+    }
+
+    clearMarkers();
+    venueListEl.innerHTML = "";
+
+    resolved.forEach(({ venue, result }, idx) => {
       const item = document.createElement("div");
       item.className = "venue-item";
-      item.innerHTML = `
-        <div class="venue-name">${venue.name}</div>
-        <div class="venue-meta">
-          <span class="venue-status">Locating...</span>
-          <a href="${googleMapsSearchUrl(venue.name)}" target="_blank" class="venue-gmaps">Google Maps</a>
-        </div>
-      `;
+
+      let distHtml = "";
+      if (sortByNearest && userLocation && result) {
+        const km = haversineKm(userLocation.lat, userLocation.lng, result.lat, result.lng);
+        const isClosest = idx === 0;
+        distHtml = `<span class="venue-distance${isClosest ? " closest" : ""}">${formatDistance(km)}</span>`;
+      }
+
+      if (result) {
+        venue.lat = result.lat;
+        venue.lng = result.lng;
+
+        const marker = L.marker([result.lat, result.lng])
+          .bindPopup(
+            `<strong>${venue.name}</strong><br>` +
+              `<span style="font-size:11px;color:#666">${result.displayName}</span><br>` +
+              `<a href="${googleMapsSearchUrl(venue.name)}" target="_blank" style="font-size:11px">Google Maps &rarr;</a>`
+          )
+          .addTo(map);
+        markers.push(marker);
+
+        item.innerHTML = `
+          <div class="venue-name">${venue.name}</div>
+          <div class="venue-meta">
+            <span class="venue-address">${result.displayName.split(",").slice(0, 2).join(",")}</span>
+            ${distHtml}
+            <a href="${googleMapsSearchUrl(venue.name)}" target="_blank" class="venue-gmaps">Google Maps</a>
+          </div>
+        `;
+
+        item.addEventListener("click", (e) => {
+          if (e.target.tagName === "A") return;
+          map.setView([result.lat, result.lng], 16);
+          marker.openPopup();
+          if (activeItem) activeItem.classList.remove("active");
+          item.classList.add("active");
+          activeItem = item;
+        });
+      } else {
+        item.innerHTML = `
+          <div class="venue-name">${venue.name}</div>
+          <div class="venue-meta">
+            <span class="venue-status venue-not-found">Location not found</span>
+            ${distHtml}
+            <a href="${googleMapsSearchUrl(venue.name)}" target="_blank" class="venue-gmaps">Google Maps</a>
+          </div>
+        `;
+        item.addEventListener("click", (e) => {
+          if (e.target.tagName === "A") return;
+          window.open(googleMapsSearchUrl(venue.name), "_blank");
+        });
+      }
+
       venueListEl.appendChild(item);
-
-      geocode(venue.name).then((result) => {
-        geocoded++;
-        statusEl.textContent =
-          geocoded < filtered.length
-            ? `Locating ${geocoded}/${filtered.length}...`
-            : `${filtered.length} venues located`;
-
-        const statusSpan = item.querySelector(".venue-status");
-
-        if (result) {
-          venue.lat = result.lat;
-          venue.lng = result.lng;
-
-          const marker = L.marker([result.lat, result.lng])
-            .bindPopup(
-              `<strong>${venue.name}</strong><br>` +
-                `<span style="font-size:11px;color:#666">${result.displayName}</span><br>` +
-                `<a href="${googleMapsSearchUrl(venue.name)}" target="_blank" style="font-size:11px">Google Maps &rarr;</a>`
-            )
-            .addTo(map);
-          markers.push(marker);
-
-          statusSpan.textContent = result.displayName.split(",").slice(0, 2).join(",");
-          statusSpan.className = "venue-address";
-
-          item.addEventListener("click", (e) => {
-            if (e.target.tagName === "A") return;
-            map.setView([result.lat, result.lng], 16);
-            marker.openPopup();
-            if (activeItem) activeItem.classList.remove("active");
-            item.classList.add("active");
-            activeItem = item;
-          });
-
-          fitMapToMarkers();
-        } else {
-          statusSpan.textContent = "Location not found";
-          statusSpan.className = "venue-status venue-not-found";
-
-          item.addEventListener("click", (e) => {
-            if (e.target.tagName === "A") return;
-            window.open(googleMapsSearchUrl(venue.name), "_blank");
-          });
-        }
-      });
     });
+
+    fitMapToMarkers();
+    statusEl.textContent = sortByNearest && userLocation
+      ? `${resolved.length} venues sorted by distance`
+      : `${resolved.length} venues located`;
   }
 
   // ── Event handling ──
 
   let currentVenues = [];
+  const nearestBtn = document.getElementById("nearest-btn");
 
   searchInput.addEventListener("input", (e) => {
     renderVenues(currentVenues, e.target.value.trim());
+  });
+
+  nearestBtn.addEventListener("click", () => {
+    if (sortByNearest) {
+      sortByNearest = false;
+      nearestBtn.classList.remove("active");
+      if (userMarker) { map.removeLayer(userMarker); userMarker = null; }
+      renderVenues(currentVenues, searchInput.value.trim());
+      return;
+    }
+
+    nearestBtn.classList.add("locating");
+    nearestBtn.querySelector("span").textContent = "Locating\u2026";
+    statusEl.textContent = "Getting your location\u2026";
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        sortByNearest = true;
+        nearestBtn.classList.remove("locating");
+        nearestBtn.classList.add("active");
+        nearestBtn.querySelector("span").textContent = "Nearest";
+
+        if (userMarker) map.removeLayer(userMarker);
+        const youIcon = L.divIcon({
+          className: "you-marker",
+          html: '<div style="width:14px;height:14px;background:#4285f4;border:3px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.3)"></div>',
+          iconSize: [14, 14],
+          iconAnchor: [7, 7],
+        });
+        userMarker = L.marker([userLocation.lat, userLocation.lng], { icon: youIcon })
+          .bindPopup("<strong>You are here</strong>")
+          .addTo(map);
+
+        renderVenues(currentVenues, searchInput.value.trim());
+      },
+      (err) => {
+        nearestBtn.classList.remove("locating");
+        nearestBtn.querySelector("span").textContent = "Nearest";
+        statusEl.textContent = "Could not get location \u2013 check browser permissions";
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
   });
 
   window.addEventListener("message", (event) => {
