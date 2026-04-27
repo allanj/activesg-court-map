@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ActiveSG Court Map</title>
+  <link rel="stylesheet" href="lib/leaflet.css" />
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
@@ -32,23 +33,18 @@
   </div>
 
   <div class="content hidden" id="content-map">
-    <iframe
-      id="overview-map"
-      class="overview-map"
-      src="https://www.openstreetmap.org/export/embed.html?bbox=103.6%2C1.22%2C104.05%2C1.47&layer=mapnik"
-      scrolling="no"
-    ></iframe>
-    <p class="map-hint">Click a venue in the list for its specific location</p>
+    <div id="overview-map" class="overview-map"></div>
   </div>
 
   <div class="footer">
-    <a href="https://activesg.gov.sg/facility-bookings/activities/YLONatwvqJfikKOmB5N9U/venues" target="_blank">
+    <a href="https://activesg.gov.sg/facility-bookings/activities/YLONatwvqJfikKOmB5N9U/venues" target="_blank" rel="noopener noreferrer">
       Open ActiveSG Booking
     </a>
     <span class="venue-count" id="venue-count"></span>
   </div>
 
   <script src="venues.js"></script>
+  <script src="lib/leaflet.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

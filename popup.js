@@ -6,6 +6,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const contentList = document.getElementById("content-list");
   const contentMap = document.getElementById("content-map");
 
+  delete L.Icon.Default.prototype._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: "lib/marker-icon-2x.png",
+    iconUrl: "lib/marker-icon.png",
+    shadowUrl: "lib/marker-shadow.png",
+  });
+
   const uniqueVenues = new Map();
   for (const [name, data] of Object.entries(VENUE_DATABASE)) {
     const key = `${data.lat.toFixed(4)},${data.lng.toFixed(4)}`;
@@ -19,6 +26,10 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   venueCountEl.textContent = `${venues.length} venues`;
+
+  let overviewMap = null;
+  let overviewLayer = null;
+  let currentFilter = "";
 
   function isSportCentre(name) {
     const lower = name.toLowerCase();
@@ -35,15 +46,89 @@ document.addEventListener("DOMContentLoaded", () => {
     return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
   }
 
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    }[char]));
+  }
+
+  function matchesFilter(venue, filter) {
+    if (!filter) return true;
+    return (
+      venue.name.toLowerCase().includes(filter) ||
+      venue.address.toLowerCase().includes(filter) ||
+      (venue.region && venue.region.toLowerCase().includes(filter))
+    );
+  }
+
+  function initOverviewMap() {
+    if (overviewMap) {
+      overviewMap.invalidateSize();
+      renderOverviewMap(currentFilter);
+      return;
+    }
+
+    overviewMap = L.map("overview-map", { zoomControl: true }).setView([1.3521, 103.8198], 11);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+      maxZoom: 18,
+    }).addTo(overviewMap);
+
+    overviewLayer = L.layerGroup().addTo(overviewMap);
+    renderOverviewMap(currentFilter);
+  }
+
+  function renderOverviewMap(filter = "") {
+    if (!overviewMap || !overviewLayer) return;
+
+    const filtered = venues.filter((venue) => matchesFilter(venue, filter));
+    overviewMap.stop();
+    overviewLayer.clearLayers();
+
+    const markers = filtered.map((venue) => {
+      const marker = L.marker([venue.lat, venue.lng]).bindPopup(`
+        <div class="overview-popup-title">${escapeHtml(venue.name)}</div>
+        <div class="overview-popup-address">${escapeHtml(venue.address)}</div>
+        <a class="overview-popup-link" href="${createGoogleMapsUrl(venue.lat, venue.lng, venue.name)}" target="_blank" rel="noopener noreferrer">
+          Open in Google Maps &rarr;
+        </a>
+      `);
+      marker.addTo(overviewLayer);
+      return marker;
+    });
+
+    if (markers.length === 1) {
+      overviewMap.setView(markers[0].getLatLng(), 15, { animate: false });
+      markers[0].openPopup();
+    } else if (markers.length > 1) {
+      const latValues = filtered.map((venue) => venue.lat);
+      const lngValues = filtered.map((venue) => venue.lng);
+      const latSpread = Math.max(...latValues) - Math.min(...latValues);
+      const lngSpread = Math.max(...lngValues) - Math.min(...lngValues);
+
+      if (latSpread < 0.02 && lngSpread < 0.02) {
+        const centerLat = latValues.reduce((sum, lat) => sum + lat, 0) / latValues.length;
+        const centerLng = lngValues.reduce((sum, lng) => sum + lng, 0) / lngValues.length;
+        overviewMap.setView([centerLat, centerLng], 15, { animate: false });
+      } else {
+        overviewMap.fitBounds(L.featureGroup(markers).getBounds().pad(0.12), { animate: false });
+      }
+    } else {
+      overviewMap.setView([1.3521, 103.8198], 11, { animate: false });
+    }
+  }
+
   function renderVenues(filter = "") {
-    const filtered = filter
-      ? venues.filter(
-          (v) =>
-            v.name.toLowerCase().includes(filter) ||
-            v.address.toLowerCase().includes(filter) ||
-            (v.region && v.region.toLowerCase().includes(filter))
-        )
-      : venues;
+    currentFilter = filter;
+    const filtered = venues.filter((venue) => matchesFilter(venue, filter));
+    venueCountEl.textContent = filter
+      ? `${filtered.length} of ${venues.length} venues`
+      : `${venues.length} venues`;
+    renderOverviewMap(filter);
 
     if (filtered.length === 0) {
       venueList.innerHTML = '<div class="no-results">No venues found</div>';
@@ -67,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="venue-map-preview">
             <iframe loading="lazy"></iframe>
             <div class="map-actions">
-              <a href="${createGoogleMapsUrl(v.lat, v.lng, v.name)}" target="_blank">Open in Google Maps &rarr;</a>
+              <a href="${createGoogleMapsUrl(v.lat, v.lng, v.name)}" target="_blank" rel="noopener noreferrer">Open in Google Maps &rarr;</a>
             </div>
           </div>
         </div>
@@ -122,6 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         contentList.classList.add("hidden");
         contentMap.classList.remove("hidden");
+        requestAnimationFrame(initOverviewMap);
       }
     });
   });

@@ -100,7 +100,10 @@
       pendingVenues = venues;
       return;
     }
-    sidebarFrame.contentWindow.postMessage({ type: "asg-venues", venues }, "*");
+    sidebarFrame.contentWindow.postMessage(
+      { type: "asg-venues", venues },
+      new URL(chrome.runtime.getURL("")).origin
+    );
   }
 
   function rescanAndSend() {

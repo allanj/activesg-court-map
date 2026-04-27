@@ -164,21 +164,9 @@ body {
   display: block;
 }
 
-.map-hint {
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 11px;
-  color: #666;
-  background: rgba(255,255,255,0.9);
-  padding: 4px 10px;
-  border-radius: 4px;
-  pointer-events: none;
-}
-
 #content-map {
   position: relative;
+  min-height: 0;
 }
 
 .footer {
@@ -210,4 +198,31 @@ body {
   text-align: center;
   color: #666;
   font-size: 13px;
+}
+
+.overview-map .leaflet-popup-content {
+  margin: 10px 12px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.overview-popup-title {
+  font-weight: 600;
+  color: #202124;
+  margin-bottom: 4px;
+}
+
+.overview-popup-address {
+  color: #5f6368;
+  margin-bottom: 6px;
+}
+
+.overview-popup-link {
+  color: #1a73e8;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.overview-popup-link:hover {
+  text-decoration: underline;
 }

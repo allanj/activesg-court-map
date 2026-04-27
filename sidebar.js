@@ -57,6 +57,16 @@ document.addEventListener("DOMContentLoaded", () => {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + " Singapore")}`;
   }
 
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    }[char]));
+  }
+
   // ── Distance helpers ──
 
   function haversineKm(lat1, lng1, lat2, lng2) {
@@ -92,6 +102,18 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (markers.length > 1) {
       map.fitBounds(L.featureGroup(markers).getBounds().pad(0.15));
     }
+  }
+
+  function focusNearestMarker(marker) {
+    const focusMarkers = userMarker ? [marker, userMarker] : [marker];
+    if (focusMarkers.length > 1) {
+      map.fitBounds(L.featureGroup(focusMarkers).getBounds().pad(0.35), {
+        maxZoom: 15,
+      });
+    } else {
+      map.setView(marker.getLatLng(), 15);
+    }
+    marker.openPopup();
   }
 
   async function renderVenues(venues, filter) {
@@ -132,9 +154,13 @@ document.addEventListener("DOMContentLoaded", () => {
     clearMarkers();
     venueListEl.innerHTML = "";
 
+    let nearestMarker = null;
+    let nearestItem = null;
+
     resolved.forEach(({ venue, result }, idx) => {
       const item = document.createElement("div");
       item.className = "venue-item";
+      const venueName = escapeHtml(venue.name);
 
       let distHtml = "";
       if (sortByNearest && userLocation && result) {
@@ -146,22 +172,27 @@ document.addEventListener("DOMContentLoaded", () => {
       if (result) {
         venue.lat = result.lat;
         venue.lng = result.lng;
+        const displayName = escapeHtml(result.displayName);
+        const shortDisplayName = escapeHtml(result.displayName.split(",").slice(0, 2).join(","));
 
         const marker = L.marker([result.lat, result.lng])
           .bindPopup(
-            `<strong>${venue.name}</strong><br>` +
-              `<span style="font-size:11px;color:#666">${result.displayName}</span><br>` +
-              `<a href="${googleMapsSearchUrl(venue.name)}" target="_blank" style="font-size:11px">Google Maps &rarr;</a>`
+            `<strong>${venueName}</strong><br>` +
+              `<span style="font-size:11px;color:#666">${displayName}</span><br>` +
+              `<a href="${googleMapsSearchUrl(venue.name)}" target="_blank" rel="noopener noreferrer" style="font-size:11px">Google Maps &rarr;</a>`
           )
           .addTo(map);
         markers.push(marker);
+        if (sortByNearest && userLocation && !nearestMarker) {
+          nearestMarker = marker;
+        }
 
         item.innerHTML = `
-          <div class="venue-name">${venue.name}</div>
+          <div class="venue-name">${venueName}</div>
           <div class="venue-meta">
-            <span class="venue-address">${result.displayName.split(",").slice(0, 2).join(",")}</span>
+            <span class="venue-address">${shortDisplayName}</span>
             ${distHtml}
-            <a href="${googleMapsSearchUrl(venue.name)}" target="_blank" class="venue-gmaps">Google Maps</a>
+            <a href="${googleMapsSearchUrl(venue.name)}" target="_blank" rel="noopener noreferrer" class="venue-gmaps">Google Maps</a>
           </div>
         `;
 
@@ -175,11 +206,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       } else {
         item.innerHTML = `
-          <div class="venue-name">${venue.name}</div>
+          <div class="venue-name">${venueName}</div>
           <div class="venue-meta">
             <span class="venue-status venue-not-found">Location not found</span>
             ${distHtml}
-            <a href="${googleMapsSearchUrl(venue.name)}" target="_blank" class="venue-gmaps">Google Maps</a>
+            <a href="${googleMapsSearchUrl(venue.name)}" target="_blank" rel="noopener noreferrer" class="venue-gmaps">Google Maps</a>
           </div>
         `;
         item.addEventListener("click", (e) => {
@@ -188,10 +219,23 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
+      if (sortByNearest && userLocation && idx === 0 && result) {
+        nearestItem = item;
+      }
+
       venueListEl.appendChild(item);
     });
 
-    fitMapToMarkers();
+    if (nearestMarker) {
+      focusNearestMarker(nearestMarker);
+      if (nearestItem) {
+        if (activeItem) activeItem.classList.remove("active");
+        nearestItem.classList.add("active");
+        activeItem = nearestItem;
+      }
+    } else {
+      fitMapToMarkers();
+    }
     statusEl.textContent = sortByNearest && userLocation
       ? `${resolved.length} venues sorted by distance`
       : `${resolved.length} venues located`;
@@ -250,6 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   window.addEventListener("message", (event) => {
+    if (event.origin !== "https://activesg.gov.sg") return;
     if (event.data && event.data.type === "asg-venues") {
       currentVenues = event.data.venues || [];
       searchInput.value = "";
