@@ -64,8 +64,12 @@ Chrome Web Store requirements — the current `docs/images/*.png` are 380×520
   3. Popup "Near me" active, showing distance badges.
   4. Overview map tab with markers across Singapore.
   5. A venue's Google Maps hand-off.
-- [ ] **Small promo tile** 440×280 (used in store search/category pages).
-- [ ] **Marquee promo** 1400×560 (optional, for featured placement).
+- [x] **Small promo tile** 440×280 — `docs/images/promo-tile-440x280.png`.
+- [x] **Marquee promo** 1400×560 — `docs/images/promo-marquee-1400x560.png`.
+
+The promo tiles are generated from `scripts/gen-promo.js`
+(`npm i -D @resvg/resvg-js && node scripts/gen-promo.js`). Edit that script to
+tweak the copy or colours, then rerun it.
 
 Tip: capture screenshots from the installed unpacked extension at the real
 1280×800 canvas (pad the 380px popup on a branded background) so reviewers see
