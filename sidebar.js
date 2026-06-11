@@ -131,6 +131,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Open a marker's popup only after the current map movement settles, so
+  // Leaflet's auto-pan measures the final viewport instead of a
+  // mid-animation one (which leaves the popup clipped at the map edge).
+  function openPopupWhenSettled(marker) {
+    const open = () => marker.openPopup();
+    map.once("moveend", open);
+    setTimeout(() => {
+      map.off("moveend", open);
+      if (!marker.isPopupOpen()) marker.openPopup();
+    }, 700);
+  }
+
   function focusNearestMarker(marker) {
     const focusMarkers = userMarker ? [marker, userMarker] : [marker];
     if (focusMarkers.length > 1) {
@@ -140,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       map.setView(marker.getLatLng(), 15);
     }
-    marker.openPopup();
+    openPopupWhenSettled(marker);
   }
 
   async function renderVenues(venues, filter) {
@@ -209,7 +221,8 @@ document.addEventListener("DOMContentLoaded", () => {
           .bindPopup(
             `<strong>${venueName}</strong><br>` +
               `<span style="font-size:11px;color:#666">${displayName}</span><br>` +
-              `<a href="${googleMapsSearchUrl(venue.name)}" target="_blank" rel="noopener noreferrer" style="font-size:11px">Google Maps &rarr;</a>`
+              `<a href="${googleMapsSearchUrl(venue.name)}" target="_blank" rel="noopener noreferrer" style="font-size:11px">Google Maps &rarr;</a>`,
+            { maxWidth: 220, autoPanPadding: L.point(12, 12) }
           )
           .addTo(map);
         markers.push(marker);
@@ -229,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
         item.addEventListener("click", (e) => {
           if (e.target.tagName === "A") return;
           map.setView([result.lat, result.lng], 16);
-          marker.openPopup();
+          openPopupWhenSettled(marker);
           if (activeItem) activeItem.classList.remove("active");
           item.classList.add("active");
           activeItem = item;

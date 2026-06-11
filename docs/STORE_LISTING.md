@@ -64,13 +64,14 @@ Chrome Web Store requirements — the current `docs/images/*.png` are 380×520
   - `docs/images/screenshot-3-nearest.png` — "Near me" with distance badges.
   - `docs/images/screenshot-4-map.png` — overview map with markers.
   - `docs/images/screenshot-5-sidebar.png` — the Court Map sidebar (map, venue
-    list, distance sorting). Rendered from the real sidebar UI.
+    list, "Nearest" distance sorting). Rendered from the real sidebar UI with
+    live OpenStreetMap tiles.
 
-### Capturing an authentic sidebar shot on the live site
+### Optional: capturing the sidebar in context on the live site
 
-`screenshot-5-sidebar.png` shows the genuine sidebar component, but rendered
-locally (the build environment cannot reach `activesg.gov.sg`). For the most
-convincing listing, recapture it in context on your own machine:
+`screenshot-5-sidebar.png` is generated from the genuine sidebar component,
+but standalone rather than docked over a real booking page. If you want an
+in-context shot instead, capture it on your own machine:
 
 1. Load the unpacked extension at `chrome://extensions` (Developer mode → Load unpacked).
 2. Open a booking page, e.g. an activity's **venues** list.
