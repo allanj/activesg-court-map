@@ -63,9 +63,19 @@ Chrome Web Store requirements — the current `docs/images/*.png` are 380×520
   - `docs/images/screenshot-2-filters.png` — type/region filter chips active.
   - `docs/images/screenshot-3-nearest.png` — "Near me" with distance badges.
   - `docs/images/screenshot-4-map.png` — overview map with markers.
-  - [ ] **Still needed (manual):** sidebar open on a real ActiveSG booking page —
-    requires the unpacked extension loaded in Chrome on a live booking page, so
-    it can't be auto-captured here.
+  - `docs/images/screenshot-5-sidebar.png` — the Court Map sidebar (map, venue
+    list, distance sorting). Rendered from the real sidebar UI.
+
+### Capturing an authentic sidebar shot on the live site
+
+`screenshot-5-sidebar.png` shows the genuine sidebar component, but rendered
+locally (the build environment cannot reach `activesg.gov.sg`). For the most
+convincing listing, recapture it in context on your own machine:
+
+1. Load the unpacked extension at `chrome://extensions` (Developer mode → Load unpacked).
+2. Open a booking page, e.g. an activity's **venues** list.
+3. Click the floating map button to open the sidebar; click **Nearest** and allow location.
+4. Capture the browser at 1280×800 with the sidebar docked over the real page.
 - [x] **Small promo tile** 440×280 — `docs/images/promo-tile-440x280.png`.
 - [x] **Marquee promo** 1400×560 — `docs/images/promo-marquee-1400x560.png`.
 
