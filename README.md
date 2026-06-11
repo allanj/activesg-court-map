@@ -18,9 +18,13 @@ The extension is intentionally narrow: it only runs on `activesg.gov.sg`, only l
 
 ## Screenshots
 
-| Venue list | Overview map |
+| Venue directory | Find the nearest |
 | --- | --- |
-| ![Popup venue list](docs/images/popup-list.png) | ![Popup overview map](docs/images/popup-overview.png) |
+| ![Popup venue list](docs/images/screenshot-1-list.png) | ![Nearest court sorting](docs/images/screenshot-3-nearest.png) |
+
+| Filter by region & type | Overview map |
+| --- | --- |
+| ![Filter chips](docs/images/screenshot-2-filters.png) | ![Overview map](docs/images/screenshot-4-map.png) |
 
 ## How It Works
 
