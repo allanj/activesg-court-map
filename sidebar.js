@@ -22,9 +22,34 @@ document.addEventListener("DOMContentLoaded", () => {
   let markers = [];
   let activeItem = null;
 
-  // ── Geocoding: pre-built cache → OneMap fallback ──
+  // ── Geocoding: pre-built cache → persisted fallback → OneMap fallback ──
 
+  const STORAGE_KEY = "asg-geocode-cache";
   const runtimeCache = {};
+
+  // Hydrate memory cache with previously resolved OneMap fallbacks so we
+  // don't re-query OneMap for the same venues on every page load.
+  const storageReady = (async () => {
+    try {
+      const stored = (await chrome.storage.local.get(STORAGE_KEY))[STORAGE_KEY];
+      if (stored) {
+        for (const [key, value] of Object.entries(stored)) {
+          if (runtimeCache[key] === undefined) runtimeCache[key] = value;
+        }
+      }
+    } catch {}
+  })();
+
+  function persistGeocode(key, value) {
+    chrome.storage.local
+      .get(STORAGE_KEY)
+      .then((data) => {
+        const map = data[STORAGE_KEY] || {};
+        map[key] = value;
+        return chrome.storage.local.set({ [STORAGE_KEY]: map });
+      })
+      .catch(() => {});
+  }
 
   function geocode(name) {
     const key = name.toLowerCase();
@@ -44,8 +69,10 @@ document.addEventListener("DOMContentLoaded", () => {
       chrome.runtime.sendMessage({ type: "geocode", name }, (result) => {
         if (result) {
           runtimeCache[key] = result;
+          persistGeocode(key, result);
           resolve(result);
         } else {
+          // Keep null in memory only — a missing venue may be added later.
           runtimeCache[key] = null;
           resolve(null);
         }
@@ -104,6 +131,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Open a marker's popup only after the current map movement settles, so
+  // Leaflet's auto-pan measures the final viewport instead of a
+  // mid-animation one (which leaves the popup clipped at the map edge).
+  function openPopupWhenSettled(marker) {
+    const open = () => marker.openPopup();
+    map.once("moveend", open);
+    setTimeout(() => {
+      map.off("moveend", open);
+      if (!marker.isPopupOpen()) marker.openPopup();
+    }, 700);
+  }
+
   function focusNearestMarker(marker) {
     const focusMarkers = userMarker ? [marker, userMarker] : [marker];
     if (focusMarkers.length > 1) {
@@ -113,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       map.setView(marker.getLatLng(), 15);
     }
-    marker.openPopup();
+    openPopupWhenSettled(marker);
   }
 
   async function renderVenues(venues, filter) {
@@ -132,6 +171,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     statusEl.textContent = `Locating venues...`;
+
+    // Make sure persisted fallback geocodes are loaded before we resolve.
+    await storageReady;
 
     const resolved = await Promise.all(
       filtered.map(async (venue) => {
@@ -179,7 +221,8 @@ document.addEventListener("DOMContentLoaded", () => {
           .bindPopup(
             `<strong>${venueName}</strong><br>` +
               `<span style="font-size:11px;color:#666">${displayName}</span><br>` +
-              `<a href="${googleMapsSearchUrl(venue.name)}" target="_blank" rel="noopener noreferrer" style="font-size:11px">Google Maps &rarr;</a>`
+              `<a href="${googleMapsSearchUrl(venue.name)}" target="_blank" rel="noopener noreferrer" style="font-size:11px">Google Maps &rarr;</a>`,
+            { maxWidth: 220, autoPanPadding: L.point(12, 12) }
           )
           .addTo(map);
         markers.push(marker);
@@ -199,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
         item.addEventListener("click", (e) => {
           if (e.target.tagName === "A") return;
           map.setView([result.lat, result.lng], 16);
-          marker.openPopup();
+          openPopupWhenSettled(marker);
           if (activeItem) activeItem.classList.remove("active");
           item.classList.add("active");
           activeItem = item;

@@ -24,7 +24,9 @@
     for (const n of el.childNodes) {
       if (n.nodeType === Node.TEXT_NODE) t += n.textContent;
     }
-    return t.trim();
+    // Collapse whitespace so "Bishan  Sport Hall\n" and "Bishan Sport Hall"
+    // dedupe to the same venue name.
+    return t.replace(/\s+/g, " ").trim();
   }
 
   function scanPageVenues() {
@@ -35,6 +37,9 @@
     for (const el of els) {
       const text = getDirectText(el);
       if (!text || text.length < 5 || text.length > 120) continue;
+      // A venue name is a short label, not a paragraph; cap the word count
+      // to avoid matching sentences that happen to mention a keyword.
+      if (text.split(" ").length > 10) continue;
       if (looksLikeVenueName(text) && !found.has(text)) {
         found.set(text, { name: text, onPage: true });
       }
