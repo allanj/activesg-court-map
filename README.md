@@ -10,6 +10,8 @@ The extension is intentionally narrow: it only runs on `activesg.gov.sg`, only l
 - Detects venue names already visible on the page.
 - Maps venues with Leaflet and OpenStreetMap tiles.
 - Lets you search venues by name, address, or region from the extension popup.
+- Filters popup venues by **type** (sport centre vs school hall) and **region** with one-tap chips.
+- Sorts popup venues by distance with **Near me** after you grant location.
 - Shows all known badminton venues on an interactive overview map.
 - Opens any venue in Google Maps for route planning.
 - Sorts page venues by distance when you click **Nearest** and allows browser geolocation.
@@ -62,7 +64,7 @@ Package command:
 
 ```sh
 mkdir -p dist
-zip -r dist/activesg-court-map-1.2.0.zip \
+zip -r dist/activesg-court-map-1.3.0.zip \
   manifest.json background.js content.js content.css \
   popup.html popup.css popup.js \
   sidebar.html sidebar.css sidebar.js \
@@ -98,11 +100,12 @@ For store screenshots, prefer real Chrome screenshots from the installed unpacke
 
 - The extension does not collect analytics.
 - The extension does not send venue browsing activity to a private server.
-- The **Nearest** feature uses browser geolocation only after the user clicks the button and grants permission.
-- Location is used in the sidebar to sort venues by distance and is not stored by this extension.
+- The **Nearest** (sidebar) and **Near me** (popup) features use browser geolocation only after the user clicks the button and grants permission.
+- Location is used to sort venues by distance and is not stored by this extension.
 - Map tiles are loaded from OpenStreetMap.
 - Google Maps links open only when the user clicks them.
 - OneMap is queried only when a visible venue needs a geocode fallback.
+- Geocode fallback results are cached locally via `chrome.storage.local` to avoid repeat lookups; no browsing data is stored.
 
 ## Development
 
@@ -116,17 +119,22 @@ Key files:
 - `popup.js`: renders the toolbar popup venue list and overview map.
 - `venues.js`: bundled venue database for the popup.
 - `geocache.js`: generated geocode cache used by the sidebar.
+- `venue-names.js`: canonical list of bookable venue names (single source of truth).
 - `build-geocache.js`: helper script to regenerate the geocode cache.
+- `validate.js`: data-drift checks (run in CI and the SessionStart hook).
+- `check.sh`: syntax + manifest + validation checks, used by CI and locally.
 
 Quick checks:
 
 ```sh
-for f in popup.js sidebar.js content.js background.js venues.js geocache.js build-geocache.js; do
-  node --check "$f" || exit 1
-done
-
-node -e "JSON.parse(require('fs').readFileSync('manifest.json', 'utf8')); console.log('manifest ok')"
+sh check.sh
 ```
+
+This runs `node --check` on every script, validates `manifest.json`, and runs
+`node validate.js` to confirm the geocode cache and popup database have not
+drifted from the canonical venue list. The same script runs in GitHub Actions
+(`.github/workflows/ci.yml`) on every push and as a Claude Code SessionStart
+hook (`.claude/settings.json`).
 
 ## Regenerating The Geocode Cache
 

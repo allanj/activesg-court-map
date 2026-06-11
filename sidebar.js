@@ -22,9 +22,34 @@ document.addEventListener("DOMContentLoaded", () => {
   let markers = [];
   let activeItem = null;
 
-  // ── Geocoding: pre-built cache → OneMap fallback ──
+  // ── Geocoding: pre-built cache → persisted fallback → OneMap fallback ──
 
+  const STORAGE_KEY = "asg-geocode-cache";
   const runtimeCache = {};
+
+  // Hydrate memory cache with previously resolved OneMap fallbacks so we
+  // don't re-query OneMap for the same venues on every page load.
+  const storageReady = (async () => {
+    try {
+      const stored = (await chrome.storage.local.get(STORAGE_KEY))[STORAGE_KEY];
+      if (stored) {
+        for (const [key, value] of Object.entries(stored)) {
+          if (runtimeCache[key] === undefined) runtimeCache[key] = value;
+        }
+      }
+    } catch {}
+  })();
+
+  function persistGeocode(key, value) {
+    chrome.storage.local
+      .get(STORAGE_KEY)
+      .then((data) => {
+        const map = data[STORAGE_KEY] || {};
+        map[key] = value;
+        return chrome.storage.local.set({ [STORAGE_KEY]: map });
+      })
+      .catch(() => {});
+  }
 
   function geocode(name) {
     const key = name.toLowerCase();
@@ -44,8 +69,10 @@ document.addEventListener("DOMContentLoaded", () => {
       chrome.runtime.sendMessage({ type: "geocode", name }, (result) => {
         if (result) {
           runtimeCache[key] = result;
+          persistGeocode(key, result);
           resolve(result);
         } else {
+          // Keep null in memory only — a missing venue may be added later.
           runtimeCache[key] = null;
           resolve(null);
         }
@@ -132,6 +159,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     statusEl.textContent = `Locating venues...`;
+
+    // Make sure persisted fallback geocodes are loaded before we resolve.
+    await storageReady;
 
     const resolved = await Promise.all(
       filtered.map(async (venue) => {

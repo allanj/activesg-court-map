@@ -43,6 +43,78 @@ body {
 
 .search-bar input:focus { border-color: #1a73e8; }
 
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: white;
+  border-bottom: 1px solid #e8e8e8;
+  flex-shrink: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  scrollbar-width: thin;
+}
+
+.filters::-webkit-scrollbar { height: 4px; }
+.filters::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 2px; }
+
+.chip {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  color: #5f6368;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.chip:hover { border-color: #1a73e8; color: #1a73e8; }
+
+.chip.active {
+  background: #1a73e8;
+  border-color: #1a73e8;
+  color: #fff;
+}
+
+.chip.near-me {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chip.near-me.locating {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.chip-sep {
+  flex-shrink: 0;
+  width: 1px;
+  align-self: stretch;
+  background: #e8e8e8;
+  margin: 2px 2px;
+}
+
+.venue-distance {
+  font-size: 10px;
+  font-weight: 600;
+  color: #1a73e8;
+  background: #e8f0fe;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+}
+
+.venue-distance.closest {
+  color: #fff;
+  background: #1a73e8;
+}
+
 .tabs {
   display: flex;
   background: white;
